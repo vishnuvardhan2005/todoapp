@@ -27,6 +27,7 @@ public class Task{
         return title + " " + desc;
     }
 
+    // Getters
     public Long getId(){
         return id;
     }
@@ -37,6 +38,15 @@ public class Task{
 
     public String getDesc() {
         return desc;
+    }
+
+    // Setters
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
 }

@@ -16,20 +16,4 @@ public class TodoappApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TodoappApplication.class, args);
 	}
-
-	@Bean
-	public CommandLineRunner demo(TaskRepository repo) {
-		return (args) -> {
-			// save tasks
-			repo.save(new Task("Task 1", "This is task1"));
-			repo.save(new Task("Task 2", "This is a task2"));
-
-			// fetch customers
-			log.info("Getting all customers");
-			for (Task task :
-					repo.findAll()) {
-				log.info(task.getTitle(), task.getDesc());
-			}
-		};
-	}
 }

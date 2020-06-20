@@ -1,11 +1,9 @@
 package com.example.todoapp.api;
 
 import com.example.todoapp.domain.Task;
+import com.example.todoapp.error.TaskNotFoundException;
 import com.example.todoapp.repo.TaskRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,14 +15,42 @@ public class TaskController {
         this.repo = repo;
     }
 
-    // Get all
+    // GET ALL
     @GetMapping("/tasks")
     List<Task> all() {
         return (List<Task>) repo.findAll();
     }
 
-    @PostMapping("/tasks")
-    Task newTask(@RequestBody Task task) {
-        return repo.save(task);
+    // GET ONE
+    @GetMapping("tasks/{id}")
+    Task one(@PathVariable Long id) {
+        return repo.findById(id)
+                .orElseThrow(() ->new TaskNotFoundException());
     }
+
+    // CREATE
+    @PostMapping("/tasks")
+    Task create(@RequestBody Task task) {
+        return repo.save((task));
+    }
+
+    // UPDATE
+    @PutMapping("tasks/{id}")
+    Task update(@RequestBody Task task, @PathVariable Long id) {
+        Task task_in_db = repo.findById(id).orElse(null);
+        if (task_in_db != null){
+            task_in_db.setDesc(task.getDesc());
+            task_in_db.setTitle(task.getTitle());
+            return repo.save(task_in_db);
+        } else {
+            return repo.save(task);
+        }
+    }
+
+    // DELETE
+    @DeleteMapping("tasks/{id}")
+    void remove(@PathVariable Long id) {
+        repo.deleteById(id);
+    }
+
 }
