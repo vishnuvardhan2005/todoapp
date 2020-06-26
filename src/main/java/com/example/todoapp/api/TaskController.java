@@ -2,23 +2,29 @@ package com.example.todoapp.api;
 
 import com.example.todoapp.domain.Task;
 import com.example.todoapp.error.TaskNotFoundException;
-import com.example.todoapp.repo.TaskRepository;
+import com.example.todoapp.repo.TaskRepository_MongoDB;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class TaskController {
-    private final TaskRepository repo;
 
-    TaskController(TaskRepository repo) {
+    private final TaskRepository_MongoDB repo;
+
+    @Autowired
+    TaskController(TaskRepository_MongoDB repo) {
         this.repo = repo;
     }
 
     // GET ALL
     @GetMapping("/tasks")
-    List<Task> all() {
-        return (List<Task>) repo.findAll();
+    public String all(Model model) {
+        model.addAttribute("tasks", repo.findAll());
+        return "tasks";
     }
 
     // GET ONE
@@ -52,5 +58,4 @@ public class TaskController {
     void remove(@PathVariable Long id) {
         repo.deleteById(id);
     }
-
 }

@@ -14,11 +14,11 @@ public class InitDB {
     private static final Logger Log = LoggerFactory.getLogger(InitDB.class);
 
     @Bean
-    CommandLineRunner initDatabase(TaskRepository repo) {
+    CommandLineRunner initDatabase(TaskRepository_MongoDB repo) {
         return args -> {
             Log.info("Creating DB...");
-            repo.save(new Task("Clean house", "Clean the full house"));
-            repo.save(new Task("Get grocery", "Get montly grocery"));
+            //repo.save(new Task("Clean house", "Clean the full house"));
+            //repo.save(new Task("Get grocery", "Get montly grocery"));
             Log.info("Finished db creation");
         };
     }
