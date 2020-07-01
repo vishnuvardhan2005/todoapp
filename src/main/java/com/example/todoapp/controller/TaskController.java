@@ -1,44 +1,56 @@
-package com.example.todoapp.api;
+package com.example.todoapp.controller;
 
 import com.example.todoapp.domain.Task;
-import com.example.todoapp.error.TaskNotFoundException;
-import com.example.todoapp.repo.TaskRepository_MongoDB;
+import com.example.todoapp.service.TaskService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 // Controller for Task
 @Controller
 public class TaskController {
+    private Logger Log = LoggerFactory.getLogger(TaskController.class);
 
-    private final TaskRepository_MongoDB repo;
+    // Service
+    private final TaskService taskService;
 
     @Autowired
-    TaskController(TaskRepository_MongoDB repo) {
-        this.repo = repo;
+    TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     // GET ALL
     @GetMapping("/tasks")
     public String all(Model model) {
-        model.addAttribute("tasks", repo.findAll());
-        return "tasks";
+        model.addAttribute("tasks", taskService.getAll());
+        return "task/list";
     }
 
     // GET ONE
     @GetMapping("tasks/{id}")
-    Task one(@PathVariable Long id) {
-        return repo.findById(id)
-                .orElseThrow(() ->new TaskNotFoundException());
+    public String one(@PathVariable String id, Model model) {
+        model.addAttribute("task", taskService.getById(id));
+        return "task/show";
     }
 
-    // CREATE
-    @PostMapping("/tasks")
-    Task create(@RequestBody Task task) {
-        return repo.save((task));
+    /*
+    // CREATE GET
+    @GetMapping("task")
+    public String create() {
+        return "task/taskform";
+    }
+
+    // CREATE POST
+    @PostMapping("/task")
+    String create(@RequestBody Task task, Model model) {
+        Log.debug(task.getTitle());
+        Log.debug(task.getDesc());
+        repo.save((task));
+        model.addAttribute("task", task);
+        return "viewtask";
     }
 
     // UPDATE
@@ -59,4 +71,6 @@ public class TaskController {
     void remove(@PathVariable Long id) {
         repo.deleteById(id);
     }
+
+     */
 }
