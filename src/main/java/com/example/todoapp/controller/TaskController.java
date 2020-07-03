@@ -1,16 +1,22 @@
 package com.example.todoapp.controller;
 
 import com.example.todoapp.domain.Task;
+import com.example.todoapp.error.TaskNotFoundException;
 import com.example.todoapp.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // Controller for Task
 @Controller
+@RequestMapping("/tasks")
 public class TaskController {
     private Logger Log = LoggerFactory.getLogger(TaskController.class);
 
@@ -23,54 +29,64 @@ public class TaskController {
     }
 
     // GET ALL
-    @GetMapping("/tasks")
-    public String all(Model model) {
-        model.addAttribute("tasks", taskService.getAll());
-        return "task/list";
+    @GetMapping("")
+    public ResponseEntity<List<Task>> all() {
+        // Get all tasks
+        List<Task> tasks = taskService.getAll();
+
+        // Return in Response
+        return ResponseEntity.ok(tasks);
     }
 
     // GET ONE
-    @GetMapping("tasks/{id}")
-    public String one(@PathVariable String id, Model model) {
-        model.addAttribute("task", taskService.getById(id));
-        return "task/show";
-    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> one(@PathVariable String id) {
+        // Get the task
+        Task task = taskService.getById(id);
 
-    /*
-    // CREATE GET
-    @GetMapping("task")
-    public String create() {
-        return "task/taskform";
+        if (task != null) {
+            return ResponseEntity.ok(task);
+        } else {
+            // task could not be found. Return error
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // CREATE POST
-    @PostMapping("/task")
-    String create(@RequestBody Task task, Model model) {
-        Log.debug(task.getTitle());
-        Log.debug(task.getDesc());
-        repo.save((task));
-        model.addAttribute("task", task);
-        return "viewtask";
+    @PostMapping("")
+    ResponseEntity<Task> create(@RequestBody Task task) {
+        Task result = taskService.save(task);
+        if (result!=null){
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // UPDATE
-    @PutMapping("tasks/{id}")
-    Task update(@RequestBody Task task, @PathVariable Long id) {
-        Task task_in_db = repo.findById(id).orElse(null);
-        if (task_in_db != null){
-            task_in_db.setDesc(task.getDesc());
-            task_in_db.setTitle(task.getTitle());
-            return repo.save(task_in_db);
+    @PutMapping("/{id}")
+    ResponseEntity<Task> update(@RequestBody Task task, @PathVariable String id) {
+        Task dbTask = taskService.getById(id);
+        Task result;
+        if (dbTask!=null) {
+            // update it
+            dbTask.setTitle(task.getTitle());
+            dbTask.setDesc(task.getDesc());
+            result =  taskService.save(dbTask);
         } else {
-            return repo.save(task);
+            result = taskService.save(task);
+        }
+
+        if (result!=null){
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 
     // DELETE
-    @DeleteMapping("tasks/{id}")
-    void remove(@PathVariable Long id) {
-        repo.deleteById(id);
+    @DeleteMapping("/{id}")
+    void remove(@PathVariable String id) {
+        taskService.deleteById(id);
     }
-
-     */
 }

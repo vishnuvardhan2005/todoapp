@@ -29,4 +29,15 @@ public class TaskServiceImpl implements TaskService {
         Task task = getAll().stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
         return task;
     }
+
+    @Override
+    public Task save(Task task) {
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        Task task = getById(id);
+        taskRepository.delete(task);
+    }
 }

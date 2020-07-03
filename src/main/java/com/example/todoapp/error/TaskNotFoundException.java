@@ -1,7 +1,7 @@
 package com.example.todoapp.error;
 
 public class TaskNotFoundException extends RuntimeException {
-    public TaskNotFoundException() {
+    public TaskNotFoundException(String id) {
         super("Task not found");
     }
 }
