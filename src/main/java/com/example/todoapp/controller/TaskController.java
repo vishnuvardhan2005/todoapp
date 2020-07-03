@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // Controller for Task
 @Controller
@@ -26,6 +27,13 @@ public class TaskController {
     @Autowired
     TaskController(TaskService taskService) {
         this.taskService = taskService;
+    }
+
+    @GetMapping("/any")
+    @ResponseBody
+    Optional<Task> getAny() {
+        Optional<Task> task = taskService.getFirst();
+        return task;
     }
 
     // GET ALL

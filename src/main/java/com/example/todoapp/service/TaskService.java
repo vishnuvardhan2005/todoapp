@@ -3,6 +3,7 @@ package com.example.todoapp.service;
 import com.example.todoapp.domain.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskService {
     List<Task> getAll();
@@ -12,4 +13,6 @@ public interface TaskService {
     Task save(Task task);
 
     void deleteById(String id);
+
+    Optional<Task> getFirst();
 }
